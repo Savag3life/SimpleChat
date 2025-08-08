@@ -1,0 +1,12 @@
+main: not.savage.chat.SimpleChat
+authors: [ Savage ]
+description: A simple chat plugin for Minecraft.
+version: 1.0.0
+api-version: 1.21
+name: SimpleChat
+depend: [ PlaceholderAPI, LuckPerms ]
+softdepend: [ PlaceholderAPI ]
+
+commands:
+  chatreload:
+    description: Admin command to interact with SimpleChat

@@ -1,0 +1,10 @@
+formats:
+  default: "<white><bold>%name%</bold> <gray>» <white>"
+  admin: "<red><bold>%prefix% %name%</bold> <gray>» <white>"
+  owner: "<rainbow><bold>%prefix% %name% %suffix%</bold> <gray>» <white>"
+
+priority: HIGHEST
+
+messages:
+  no_permission: "<white>Unknown command."
+  reloaded: "<green>Simple Chat Reloaded."
