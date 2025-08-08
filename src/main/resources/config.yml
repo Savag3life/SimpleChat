@@ -1,7 +1,7 @@
 formats:
-  default: "<white><bold>%name%</bold> <gray>» <white>"
-  admin: "<red><bold>%prefix% %name%</bold> <gray>» <white>"
-  owner: "<rainbow><bold>%prefix% %name% %suffix%</bold> <gray>» <white>"
+  default: "%prefix% <white>%name%<reset> <gray>» %message%"
+  admin: "%prefix% <bold>%name%<reset> <gray>»</gray> <red>%message%"
+  owner: "%prefix%<reset> %name%<reset>%suffix%<reset> <gray>»</gray> <rainbow>%message%"
 
 priority: HIGHEST
 

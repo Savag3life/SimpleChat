@@ -4,6 +4,8 @@ import io.papermc.paper.chat.ChatRenderer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import not.savage.chat.SimpleChat;
@@ -83,13 +85,12 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
             format = new KyoriString(PlaceholderAPI.setPlaceholders(source, format.text()));
         }
 
-        final Component messageFormatted = format.replaceAndColor(
+        return format.replaceAndColor(
                 Placeholder.of("name", source.getName()),
                 Placeholder.of("group", formatKey),
                 Placeholder.of("prefix", user.getPrefix() != null ? user.getPrefix() : ""),
-                Placeholder.of("suffix", user.getSuffix() != null ? user.getSuffix() : "")
+                Placeholder.of("suffix", user.getSuffix() != null ? user.getSuffix() : ""),
+                Placeholder.of("message", MiniMessage.miniMessage().serialize(message))
         );
-
-        return Component.text().append(messageFormatted).append(message).build();
     }
 }
