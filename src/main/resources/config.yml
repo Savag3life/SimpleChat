@@ -4,6 +4,7 @@ formats:
   owner: "%prefix%<reset> %name%<reset>%suffix%<reset> <gray>»</gray> <rainbow>%message%"
 
 priority: HIGHEST
+support_legacy_ampersand: true
 
 messages:
   no_permission: "<white>Unknown command."

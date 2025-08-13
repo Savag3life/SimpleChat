@@ -4,8 +4,8 @@ import io.papermc.paper.chat.ChatRenderer;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import not.savage.chat.SimpleChat;
@@ -27,6 +27,7 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
     private final LuckPerms luckPerms;
     private final Map<String, KyoriString> formats = new HashMap<>();
     private final boolean usePlaceholderAPI;
+    private final boolean replaceLegacyAmpersand;
 
     public SimpleChatRenderer(final SimpleChat plugin) {
         this.plugin = plugin;
@@ -42,8 +43,13 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
 
         // Setup PlaceholderAPI
         usePlaceholderAPI = plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
-        plugin.getLogger().info("PlaceholderAPI is " + (usePlaceholderAPI ? "enabled, placeholders will be processed in message format."
-                : "not enabled, placeholders will not be processed."));
+        if (usePlaceholderAPI) {
+            plugin.getLogger().info("PlaceholderAPI found, placeholders will be processed in message format.");
+        } else {
+            plugin.getLogger().warning("PlaceholderAPI not found, placeholders will not be processed in message format.");
+        }
+
+        replaceLegacyAmpersand = plugin.getConfig().getBoolean("support_legacy_ampersand", true);
 
         // Make sure the config has at least one format defined
         if (!plugin.getConfig().isConfigurationSection("formats")) {
@@ -85,12 +91,31 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
             format = new KyoriString(PlaceholderAPI.setPlaceholders(source, format.text()));
         }
 
+        String prefix = user.getPrefix() != null ? user.getPrefix() : "";
+        String suffix = user.getSuffix() != null ? user.getSuffix() : "";
+
+        if (replaceLegacyAmpersand) {
+            prefix = replaceLegacyAmpersand(prefix);
+            suffix = replaceLegacyAmpersand(suffix);
+        }
+
         return format.replaceAndColor(
                 Placeholder.of("name", source.getName()),
                 Placeholder.of("group", formatKey),
-                Placeholder.of("prefix", user.getPrefix() != null ? user.getPrefix() : ""),
-                Placeholder.of("suffix", user.getSuffix() != null ? user.getSuffix() : ""),
+                Placeholder.of("prefix", prefix),
+                Placeholder.of("suffix", suffix),
                 Placeholder.of("message", MiniMessage.miniMessage().serialize(message))
         );
+    }
+
+    private String replaceLegacyAmpersand(String text) {
+        if (text == null || text.isEmpty()) {
+            return text;
+        }
+        final Component component = LegacyComponentSerializer.legacyAmpersand().deserialize(text);
+        String result = MiniMessage.miniMessage().serialize(component);
+
+        // un-escape adventure style tags \<tag> (LegacyComponentSerializer escapes them)
+        return result.replace("\\<", "<");
     }
 }
