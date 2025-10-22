@@ -5,6 +5,7 @@ formats:
 
 priority: HIGHEST
 support_legacy_ampersand: true
+debug: false
 
 messages:
   no_permission: "<white>Unknown command."

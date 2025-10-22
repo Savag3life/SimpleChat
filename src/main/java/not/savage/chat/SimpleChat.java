@@ -3,6 +3,7 @@ package not.savage.chat;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import not.savage.chat.commands.SimpleChatCommand;
 import not.savage.chat.listeners.ChatMessageListener;
+import not.savage.chat.listeners.DebugListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -23,6 +24,10 @@ public class SimpleChat extends JavaPlugin {
 
         new ChatMessageListener(this);
         new SimpleChatCommand(this);
+        if (getConfig().getBoolean("debug", false)) {
+            getLogger().info("Debug mode is enabled.");
+            new DebugListener(this);
+        }
         getLogger().info("SimpleChat is waiting for chat events...");
     }
 

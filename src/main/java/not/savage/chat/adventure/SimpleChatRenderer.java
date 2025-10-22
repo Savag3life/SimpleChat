@@ -15,7 +15,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,6 +93,7 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
             format = new KyoriString(PlaceholderAPI.setPlaceholders(source, format.text()));
         }
 
+        final List<Placeholder> placeholders = new ArrayList<>();
         String prefix = user.getPrefix() != null ? user.getPrefix() : "";
         String suffix = user.getSuffix() != null ? user.getSuffix() : "";
 
@@ -99,13 +102,26 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
             suffix = replaceLegacyAmpersand(suffix);
         }
 
-        return format.replaceAndColor(
-                Placeholder.of("name", source.getName()),
-                Placeholder.of("group", formatKey),
-                Placeholder.of("prefix", prefix),
-                Placeholder.of("suffix", suffix),
-                Placeholder.of("message", MiniMessage.miniMessage().serialize(message))
-        );
+        placeholders.add(Placeholder.of("prefix", prefix));
+        placeholders.add(Placeholder.of("suffix", suffix));
+        placeholders.add(Placeholder.of("message", MiniMessage.miniMessage().serialize(message)));
+        placeholders.add(Placeholder.of("name", source.getName()));
+        placeholders.add(Placeholder.of("group", formatKey));
+
+        // Find meta tag references %meta-key% and replace them with their values
+        for (Map.Entry<String, List<String>> meta : user.getMeta().entrySet()) {
+            String key = meta.getKey();
+            List<String> values = meta.getValue();
+            if (values.isEmpty()) {
+                continue;
+            }
+            // We only map the first value for each meta key
+            String value = values.get(0);
+            String placeholder = "%" + key + "%";
+            placeholders.add(Placeholder.of(placeholder, value));
+        }
+
+        return format.replaceAndColor(placeholders.toArray(new Placeholder[0]));
     }
 
     private String replaceLegacyAmpersand(String text) {
