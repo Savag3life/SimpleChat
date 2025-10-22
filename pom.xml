@@ -7,7 +7,7 @@
 
     <groupId>not.savage</groupId>
     <artifactId>SimpleChat</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

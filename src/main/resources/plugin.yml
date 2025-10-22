@@ -1,7 +1,7 @@
 main: not.savage.chat.SimpleChat
 authors: [ Savage ]
 description: A simple chat plugin for Minecraft.
-version: 1.0.1
+version: 1.1.0
 api-version: 1.21
 name: SimpleChat
 depend: [ LuckPerms ]

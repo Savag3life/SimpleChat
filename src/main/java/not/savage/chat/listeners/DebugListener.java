@@ -53,5 +53,4 @@ public class DebugListener implements Listener {
     public void detectRendererAfter(AsyncPlayerChatEvent event) {
         plugin.getLogger().info("AFTER event format: " + event.getFormat());
     }
-
 }
