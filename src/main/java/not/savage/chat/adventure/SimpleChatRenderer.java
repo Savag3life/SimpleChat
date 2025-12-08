@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Viewer UnAware Chat Renderer for SimpleChat.
  */
-public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaware {
+public class SimpleChatRenderer implements ChatRenderer {
 
     private final SimpleChat plugin;
     private final LuckPerms luckPerms;
@@ -70,11 +70,10 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
     @Override
     public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName,
                                      @NotNull Component message, @NotNull Audience viewer) {
-        return render(source, sourceDisplayName, message);
-    }
-
-    @Override
-    public @NotNull Component render(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message) {
+        if (!(viewer instanceof Player)) {
+            // If the viewer is not a player (e.g., console), we can just use the source as the viewer for PlaceholderAPI
+            viewer = source;
+        }
         final CachedMetaData user = luckPerms.getPlayerAdapter(Player.class).getMetaData(source);
 
         final String formatKey = user.getPrimaryGroup();
@@ -90,7 +89,12 @@ public class SimpleChatRenderer implements ChatRenderer, ChatRenderer.ViewerUnaw
         }
 
         if (usePlaceholderAPI) {
-            format = new KyoriString(PlaceholderAPI.setPlaceholders(source, format.text()));
+            String replacement = PlaceholderAPI.setPlaceholders(source, format.text());
+            replacement = PlaceholderAPI.setRelationalPlaceholders(source, (Player) viewer, replacement);
+            if (replaceLegacyAmpersand) {
+                replacement = replaceLegacyAmpersand(replacement);
+            }
+            format = new KyoriString(replacement);
         }
 
         final List<Placeholder> placeholders = new ArrayList<>();
