@@ -11,9 +11,15 @@
 ## Config
 ```yml
 formats:
-  default: "<white><bold>%name%</bold> <gray>» <white>"
-  admin: "<red><bold>%prefix% %name%</bold> <gray>» <white>"
-  owner: "<rainbow><bold>%prefix% %name% %suffix%</bold> <gray>» <white>"
+  default: "<white><bold><player_info></bold> <gray>» <white>"
+  admin: "<red><bold><player_info></bold> <gray>» <white>"
+  owner: "<rainbow><bold><player_info></bold> <gray>» <white>"
+  
+components:
+  player_info: |
+    <hover:show_text:"Nickname: %player_display_name%
+    Prefix: %prefix%
+    Suffix: %suffix%">%prefix% %name% %suffix%</hover>
 
 priority: HIGHEST
 
