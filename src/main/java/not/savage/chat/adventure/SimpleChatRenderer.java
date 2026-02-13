@@ -59,8 +59,20 @@ public class SimpleChatRenderer implements ChatRenderer {
             throw new IllegalStateException("Chat formats are not defined in the config.");
         }
 
+        Map<String, String> components = new HashMap<>();
+        if (plugin.getConfig().isConfigurationSection("components")) {
+            plugin.getConfig().getConfigurationSection("components").getKeys(false).forEach(key -> {
+                String componentString = plugin.getConfig().getString("components." + key).trim();
+                components.put(key, componentString);
+            });
+        }
+
         plugin.getConfig().getConfigurationSection("formats").getKeys(false).forEach(key -> {
             String formatString = plugin.getConfig().getString("formats." + key);
+            for (Map.Entry<String, String> component : components.entrySet()) {
+                formatString = formatString.replace("<" + component.getKey() + ">", component.getValue());
+            }
+
             formats.put(key, new KyoriString(formatString));
         });
 
